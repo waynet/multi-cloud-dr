@@ -10,7 +10,7 @@ resource "aws_vpc" "main" {
   cidr_block = var.vpc_ip
 
   tags = {
-    "Name" = "main_vpc"
+    Name = "main-vpc"
   }
 }
 
@@ -21,7 +21,7 @@ resource "aws_subnet" "public_1" {
   cidr_block = cidrsubnet(var.vpc_ip, 4, 3)
 
   tags = {
-    "Name" = "public_subnet_1"
+    Name = "public-subnet-1"
   }
 }
 
@@ -31,7 +31,7 @@ resource "aws_subnet" "public_2" {
   cidr_block = cidrsubnet(var.vpc_ip, 4, 2)
   
   tags = {
-    "Name" = "public_subnet_2"
+    Name = "public-subnet-2"
   }
 }
 
@@ -41,10 +41,37 @@ resource "aws_subnet" "public_3" {
   cidr_block = cidrsubnet(var.vpc_ip, 4, 1)
   
   tags = {
-    "Name" = "public_subnet_3"
+    Name = "public-subnet-3"
   }
 }
 
 # Private Subnet
+# No need to have private subnet for now
 
 # Security Group
+resource "aws_security_group" "ecs_sg" {
+  name = "ecs-cluster-security-group"
+  description = "Security Group for ECS cluster"
+  vpc_id = aws_vpc.main.id
+
+  # rules
+  ingress {
+    description = "Inbound rule - HTTPS only"
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Outbond rule - allow all traffic"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "ecs-cluster-sg"
+  }
+}
