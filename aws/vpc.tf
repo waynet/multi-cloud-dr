@@ -1,4 +1,9 @@
-## VPC setup
+### The terraform VPC file
+# Data source aws_availability_zones
+# Resource:
+#   aws_vpc
+#   aws_subnet
+#   aws_security_group
 
 # fetch the default availability zones
 data "aws_availability_zones" "azs" {

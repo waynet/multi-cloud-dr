@@ -1,3 +1,7 @@
+### The main terraform file
+# terraform required_providers
+# terraform provider
+
 # required terraform provider with version info
 terraform {
   required_providers {

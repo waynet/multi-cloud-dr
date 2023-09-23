@@ -1,5 +1,6 @@
-## List of hard-coded values for terraform
-## these are not secret
+### The terraform variable file 
+# List of hard-coded values for terraform
+# these are not secret
 
 variable "env_name" {
   description = "The AWS environment name"
