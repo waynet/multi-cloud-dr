@@ -1,4 +1,4 @@
-### The terraform VPC file
+### The terraform VPC (Virtual Private Network) file
 # Data source aws_availability_zones
 # Resource:
 #   aws_vpc
@@ -13,6 +13,8 @@ data "aws_availability_zones" "azs" {
 # Create a new VPC to avoid using the default one
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_ip
+  enable_dns_hostnames = true
+  enable_dns_support = true
 
   tags = {
     Name = "main-vpc"
@@ -20,6 +22,8 @@ resource "aws_vpc" "main" {
 }
 
 # Public Subnets
+# Public subnets are used to host internet facing applications
+# Public subnet 1
 resource "aws_subnet" "public_1" {
   vpc_id = aws_vpc.main.id
   availability_zone = data.aws_availability_zones.azs.names[0]
@@ -30,6 +34,7 @@ resource "aws_subnet" "public_1" {
   }
 }
 
+# Public subnet 2
 resource "aws_subnet" "public_2" {
   vpc_id = aws_vpc.main.id
   availability_zone = data.aws_availability_zones.azs.names[1]
@@ -40,6 +45,7 @@ resource "aws_subnet" "public_2" {
   }
 }
 
+# Public subnet 3
 resource "aws_subnet" "public_3" {
   vpc_id = aws_vpc.main.id
   availability_zone = data.aws_availability_zones.azs.names[2]
@@ -51,9 +57,10 @@ resource "aws_subnet" "public_3" {
 }
 
 # Private Subnet
+# Private subnets are used to host backend/database applications
 # No need to have private subnet for now
 
-# Security Group
+# Security Group - Firewall for the application
 resource "aws_security_group" "ecs_sg" {
   name = "ecs-cluster-security-group"
   description = "Security Group for ECS cluster"
@@ -64,6 +71,14 @@ resource "aws_security_group" "ecs_sg" {
     description = "Inbound rule - HTTPS only"
     from_port = 443
     to_port = 443
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  ingress {
+    description = "Inbound rule - HTTP only"
+    from_port = 80
+    to_port = 80
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
