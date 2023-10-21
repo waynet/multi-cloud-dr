@@ -34,7 +34,7 @@ resource "aws_iam_policy_attachment" "ecs_app_execution_role_attachment" {
 
 # The application task definition - this defines what the application
 # is by default.
-resource "aws_ecs_task_definition" "app_task_definiation" {
+resource "aws_ecs_task_definition" "app_task_definition" {
   family = "app-task"
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -60,8 +60,9 @@ resource "aws_ecs_task_definition" "app_task_definiation" {
 resource "aws_ecs_service" "app_service" {
   name = "app-service"
   cluster = aws_ecs_cluster.app.id
-  task_definition = aws_ecs_task_definition.app_task_definiation.arn
+  task_definition = aws_ecs_task_definition.app_task_definition.arn
   launch_type = "FARGATE"
+  desired_count = 1
 
   network_configuration {
     subnets = [
