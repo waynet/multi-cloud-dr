@@ -95,3 +95,32 @@ resource "aws_security_group" "ecs_sg" {
     Name = "ecs-cluster-sg"
   }
 }
+
+# Internet Gateway for the VPC public subnets
+# This will give the application access to the internet
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main.id
+}
+
+# Route table for the application to reach the internet
+resource "aws_route_table" "to_igw" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+}
+
+# Attach the route table to the public subnets
+resource "aws_route_table_association" "public_subnet1_route" {
+  subnet_id = aws_subnet.public_1.id
+  route_table_id = aws_route_table.to_igw.id
+}
+resource "aws_route_table_association" "public_subnet2_route" {
+  subnet_id = aws_subnet.public_2.id
+  route_table_id = aws_route_table.to_igw.id
+}
+resource "aws_route_table_association" "public_subnet3_route" {
+  subnet_id = aws_subnet.public_3.id
+  route_table_id = aws_route_table.to_igw.id
+}
