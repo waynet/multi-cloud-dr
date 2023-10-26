@@ -6,10 +6,11 @@ resource "azurerm_container_group" "app_container_group" {
   location            = azurerm_resource_group.app_resource_group.location
   resource_group_name = azurerm_resource_group.app_resource_group.name
   os_type             = "Linux"
+  dns_name_label = "azure-app-ncirl"
 
   container {
     name   = "app-container"
-    image  = "httpd:latest"
+    image  = "nginx:latest"
     cpu    = "0.5"
     memory = "0.5"
     ports {
