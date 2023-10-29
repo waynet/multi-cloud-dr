@@ -64,7 +64,7 @@ resource "aws_ecs_task_definition" "app_task_definition" {
   task_role_arn = aws_iam_role.aws_exec_role.arn
 
   container_definitions = jsonencode([{
-    name = "app-container"
+    name = "app-task"
     image = "nginx:latest"
     portMappings = [{
       containerPort = 80
@@ -82,8 +82,14 @@ resource "aws_ecs_service" "app_service" {
   cluster = aws_ecs_cluster.app.id
   task_definition = aws_ecs_task_definition.app_task_definition.arn
   launch_type = "FARGATE"
-  desired_count = 1
+  desired_count = 3
   enable_execute_command = true
+
+  load_balancer {
+    target_group_arn = aws_alb_target_group.ecs_app_alb_target_group.arn
+    container_name = aws_ecs_task_definition.app_task_definition.family
+    container_port = 80
+  }
 
   network_configuration {
     subnets = [
