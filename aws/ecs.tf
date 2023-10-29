@@ -15,21 +15,43 @@ resource "aws_iam_role" "ecs_app_execution_role" {
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
-    Statement = [{
-      Action = "sts:AssumeRole",
-      Effect = "Allow",
-      Principal = {
-        Service = "ecs-tasks.amazonaws.com",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com",
+        }
       }
-    }]
+    ]
   })
 }
-
 # Attach the AWS provided policy to the ecs_app_execution_role
 resource "aws_iam_policy_attachment" "ecs_app_execution_role_attachment" {
   name = "ecs_app_execution_role_attachment"
   roles = [aws_iam_role.ecs_app_execution_role.name]
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+# Role for running AWS EXEC - SSH into container directly for debugging
+resource "aws_iam_role" "aws_exec_role" {
+  name = "aws_exec_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      },
+    ]
+  })
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  ]
 }
 
 # The application task definition - this defines what the application
@@ -39,18 +61,16 @@ resource "aws_ecs_task_definition" "app_task_definition" {
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   execution_role_arn = aws_iam_role.ecs_app_execution_role.arn
+  task_role_arn = aws_iam_role.aws_exec_role.arn
 
   container_definitions = jsonencode([{
     name = "app-container"
-    image = "httpd:latest"
+    image = "nginx:latest"
     portMappings = [{
       containerPort = 80
       hostPort = 80
       protocol = "tcp"
     }]
-    essential = true
-    entryPoint = ["sh", "-c"]
-    command = ["/bin/sh -c \"echo '<html> <head> <title>Amazon ECS Sample App</title> <style>body {margin-top: 40px; background-color: #333;} </style> </head><body> <div style=color:white;text-align:center> <h1>Amazon ECS Sample App</h1> <h2>Congratulations!</h2> <p>Your application is now running on a container in Amazon ECS.</p> </div></body></html>' >  /usr/local/apache2/htdocs/index.html && httpd-foreground\""]
   }])
   cpu = 256
   memory = 512
@@ -63,6 +83,7 @@ resource "aws_ecs_service" "app_service" {
   task_definition = aws_ecs_task_definition.app_task_definition.arn
   launch_type = "FARGATE"
   desired_count = 1
+  enable_execute_command = true
 
   network_configuration {
     subnets = [
