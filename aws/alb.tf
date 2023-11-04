@@ -5,6 +5,7 @@
 #   aws_lb_listener
 
 # Security Group - Firewall for the application load balancer
+# alb accepts both HTTP and HTTPS traffic
 resource "aws_security_group" "app_lb_sg" {
   name = "app-lb-security-group"
   description = "Security Group for application load balancer"
@@ -41,6 +42,7 @@ resource "aws_security_group" "app_lb_sg" {
 }
 
 # The load balancer for the ECS application
+# alb will balance traffic into 3 different subnets
 resource "aws_alb" "ecs_app_load_balancer" {
   name = "app-load-balancer"
   load_balancer_type = "application"
@@ -48,6 +50,7 @@ resource "aws_alb" "ecs_app_load_balancer" {
   security_groups = [aws_security_group.app_lb_sg.id]
 }
 
+# The target group that the alb will direct traffic into
 resource "aws_alb_target_group" "ecs_app_alb_target_group" {
     name = "app-target-group"
     port = 80
@@ -60,12 +63,32 @@ resource "aws_alb_target_group" "ecs_app_alb_target_group" {
     }
 }
 
-resource "aws_alb_listener" "ecs_app_alb_listener" {
+# alb listener - Forward HTTPS traffic
+resource "aws_alb_listener" "ecs_app_alb_listener_https" {
   load_balancer_arn = aws_alb.ecs_app_load_balancer.arn
-  port = "80"
-  protocol = "HTTP"
+  port = "443"
+  protocol = "HTTPS"
+  ssl_policy = "ELBSecurityPolicy-2016-08"
+  certificate_arn = "arn:aws:acm:eu-west-1:311945118196:certificate/2d6e6ffa-fe93-4e5f-95c8-4f5e46f9ff5c"
+  
   default_action {
     type = "forward"
     target_group_arn = aws_alb_target_group.ecs_app_alb_target_group.arn
+  }
+}
+
+# alb listener - redirect HTTP traffic to HTTPS
+resource "aws_alb_listener" "ecs_app_alb_listener_http" {
+  load_balancer_arn = aws_alb.ecs_app_load_balancer.arn
+  port = "80"
+  protocol = "HTTP"
+  
+  default_action {
+    type = "redirect"
+    redirect {
+      protocol = "HTTPS"
+      port = "443"
+      status_code = "HTTP_301"
+    }
   }
 }
