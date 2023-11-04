@@ -72,8 +72,8 @@ resource "aws_ecs_task_definition" "app_task_definition" {
       protocol = "tcp"
     }]
   }])
-  cpu = 256
-  memory = 512
+  cpu = 512
+  memory = 1024
 }
 
 # The ECS service running the application
