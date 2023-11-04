@@ -14,3 +14,6 @@ output "container_group_lb_fqdn" {
 # output "container_group_lb_ip" {
 #   value = azurerm_lb.container_group_lb.ip_address
 # }
+output "azurerm_container_app_url" {
+  value = azurerm_container_app.container_app.latest_revision_fqdn
+}
