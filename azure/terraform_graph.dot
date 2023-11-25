@@ -1,0 +1,41 @@
+digraph {
+	node [shape=circle]
+	compound = "true"
+	newrank = "true"
+	subgraph "root" {
+		"[root] azurerm_container_group.app_container_group (expand)" [label = "azurerm_container_group.app_container_group", shape = "box"]
+		"[root] azurerm_public_ip.my_public_ip (expand)" [label = "azurerm_public_ip.my_public_ip", shape = "box"]
+		"[root] azurerm_resource_group.app_resource_group (expand)" [label = "azurerm_resource_group.app_resource_group", shape = "box"]
+		"[root] azurerm_storage_account.caddy111ppp (expand)" [label = "azurerm_storage_account.caddy111ppp", shape = "box"]
+		"[root] azurerm_storage_share.caddy (expand)" [label = "azurerm_storage_share.caddy", shape = "box"]
+		"[root] azurerm_subnet.public_subnet_1 (expand)" [label = "azurerm_subnet.public_subnet_1", shape = "box"]
+		"[root] azurerm_subnet.public_subnet_2 (expand)" [label = "azurerm_subnet.public_subnet_2", shape = "box"]
+		"[root] azurerm_subnet.public_subnet_3 (expand)" [label = "azurerm_subnet.public_subnet_3", shape = "box"]
+		"[root] azurerm_virtual_network.app_vnet (expand)" [label = "azurerm_virtual_network.app_vnet", shape = "box"]
+		"[root] provider[\"registry.terraform.io/hashicorp/azurerm\"]" [label = "provider[\"registry.terraform.io/hashicorp/azurerm\"]", shape = "diamond"]
+		"[root] var.env_name" [label = "var.env_name", shape = "note"]
+		"[root] var.vnet_ip" [label = "var.vnet_ip", shape = "note"]
+		"[root] azurerm_container_group.app_container_group (expand)" -> "[root] azurerm_storage_share.caddy (expand)"
+		"[root] azurerm_public_ip.my_public_ip (expand)" -> "[root] azurerm_resource_group.app_resource_group (expand)"
+		"[root] azurerm_resource_group.app_resource_group (expand)" -> "[root] provider[\"registry.terraform.io/hashicorp/azurerm\"]"
+		"[root] azurerm_storage_account.caddy111ppp (expand)" -> "[root] azurerm_resource_group.app_resource_group (expand)"
+		"[root] azurerm_storage_share.caddy (expand)" -> "[root] azurerm_storage_account.caddy111ppp (expand)"
+		"[root] azurerm_subnet.public_subnet_1 (expand)" -> "[root] azurerm_virtual_network.app_vnet (expand)"
+		"[root] azurerm_subnet.public_subnet_2 (expand)" -> "[root] azurerm_virtual_network.app_vnet (expand)"
+		"[root] azurerm_subnet.public_subnet_3 (expand)" -> "[root] azurerm_virtual_network.app_vnet (expand)"
+		"[root] azurerm_virtual_network.app_vnet (expand)" -> "[root] azurerm_resource_group.app_resource_group (expand)"
+		"[root] azurerm_virtual_network.app_vnet (expand)" -> "[root] var.vnet_ip"
+		"[root] output.container_fqdn (expand)" -> "[root] azurerm_container_group.app_container_group (expand)"
+		"[root] output.container_ip (expand)" -> "[root] azurerm_container_group.app_container_group (expand)"
+		"[root] provider[\"registry.terraform.io/hashicorp/azurerm\"] (close)" -> "[root] azurerm_container_group.app_container_group (expand)"
+		"[root] provider[\"registry.terraform.io/hashicorp/azurerm\"] (close)" -> "[root] azurerm_public_ip.my_public_ip (expand)"
+		"[root] provider[\"registry.terraform.io/hashicorp/azurerm\"] (close)" -> "[root] azurerm_subnet.public_subnet_1 (expand)"
+		"[root] provider[\"registry.terraform.io/hashicorp/azurerm\"] (close)" -> "[root] azurerm_subnet.public_subnet_2 (expand)"
+		"[root] provider[\"registry.terraform.io/hashicorp/azurerm\"] (close)" -> "[root] azurerm_subnet.public_subnet_3 (expand)"
+		"[root] root" -> "[root] output.container_fqdn (expand)"
+		"[root] root" -> "[root] output.container_ip (expand)"
+		"[root] root" -> "[root] provider[\"registry.terraform.io/hashicorp/azurerm\"] (close)"
+		"[root] root" -> "[root] var.env_name"
+	}
+}
+

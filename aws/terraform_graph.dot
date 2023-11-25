@@ -1,0 +1,87 @@
+digraph {
+	node [shape=circle, width=1, fontsize=70]
+	ranksep=2
+	compound = "true"
+	newrank = "true"
+	subgraph "root" {
+		"[root] aws_alb.ecs_app_load_balancer (expand)" [label = "ecs_app_load_balancer", shape = "box"]
+		"[root] aws_alb_listener.ecs_app_alb_listener_http (expand)" [label = "ecs_app_alb_listener_http", shape = "box"]
+		"[root] aws_alb_listener.ecs_app_alb_listener_https (expand)" [label = "ecs_app_alb_listener_https", shape = "box"]
+		"[root] aws_alb_target_group.ecs_app_alb_target_group (expand)" [label = "ecs_app_alb_target_group", shape = "box"]
+		"[root] aws_ecs_cluster.app (expand)" [label = "aws_ecs_cluster.app", shape = "box"]
+		"[root] aws_ecs_service.app_service (expand)" [label = "ecs_app_service", shape = "circle"]
+		"[root] aws_ecs_task_definition.app_task_definition (expand)" [label = "app_task_definition", shape = "box"]
+		"[root] aws_iam_policy_attachment.ecs_app_execution_role_attachment (expand)" [label = "ecs_app_execution_role_attachment", shape = "box"]
+		"[root] aws_iam_role.aws_exec_role (expand)" [label = "aws_exec_role", shape = "box"]
+		"[root] aws_iam_role.ecs_app_execution_role (expand)" [label = "ecs_app_execution_role", shape = "box"]
+		"[root] aws_internet_gateway.igw (expand)" [label = "aws_internet_gateway.igw", shape = "box"]
+		"[root] aws_route_table.to_igw (expand)" [label = "aws_route_table.to_igw", shape = "box"]
+		"[root] aws_route_table_association.public_subnet1_route (expand)" [label = "public_subnet1_route", shape = "circle"]
+		"[root] aws_route_table_association.public_subnet2_route (expand)" [label = "public_subnet2_route", shape = "box"]
+		"[root] aws_route_table_association.public_subnet3_route (expand)" [label = "public_subnet3_route", shape = "circle"]
+		"[root] aws_security_group.app_lb_sg (expand)" [label = "app_lb_sg", shape = "box"]
+		"[root] aws_security_group.ecs_sg (expand)" [label = "ecs_sg", shape = "box"]
+		"[root] aws_subnet.public_1 (expand)" [label = "aws_subnet.public_1", shape = "box"]
+		"[root] aws_subnet.public_2 (expand)" [label = "aws_subnet.public_2", shape = "box"]
+		"[root] aws_subnet.public_3 (expand)" [label = "aws_subnet.public_3", shape = "box"]
+		"[root] aws_vpc.main (expand)" [label = "aws_vpc.main", shape = "box"]
+		"[root] data.aws_availability_zones.azs (expand)" [label = "data.aws_availability_zones.azs", shape = "box"]
+		"[root] provider[\"registry.terraform.io/hashicorp/aws\"]" [label = "provider[\"registry.terraform.io/hashicorp/aws\"]", shape = "diamond"]
+		"[root] var.env_name" [label = "var.env_name", shape = "note"]
+		"[root] var.vpc_ip" [label = "var.vpc_ip", shape = "note"]
+		"[root] aws_alb.ecs_app_load_balancer (expand)" -> "[root] aws_security_group.app_lb_sg (expand)"
+		"[root] aws_alb.ecs_app_load_balancer (expand)" -> "[root] aws_subnet.public_1 (expand)"
+		"[root] aws_alb.ecs_app_load_balancer (expand)" -> "[root] aws_subnet.public_2 (expand)"
+		"[root] aws_alb.ecs_app_load_balancer (expand)" -> "[root] aws_subnet.public_3 (expand)"
+		"[root] aws_alb_listener.ecs_app_alb_listener_http (expand)" -> "[root] aws_alb.ecs_app_load_balancer (expand)"
+		"[root] aws_alb_listener.ecs_app_alb_listener_https (expand)" -> "[root] aws_alb.ecs_app_load_balancer (expand)"
+		"[root] aws_alb_listener.ecs_app_alb_listener_https (expand)" -> "[root] aws_alb_target_group.ecs_app_alb_target_group (expand)"
+		"[root] aws_alb_target_group.ecs_app_alb_target_group (expand)" -> "[root] aws_vpc.main (expand)"
+		"[root] aws_ecs_cluster.app (expand)" -> "[root] provider[\"registry.terraform.io/hashicorp/aws\"]"
+		"[root] aws_ecs_service.app_service (expand)" -> "[root] aws_alb_target_group.ecs_app_alb_target_group (expand)"
+		"[root] aws_ecs_service.app_service (expand)" -> "[root] aws_ecs_cluster.app (expand)"
+		"[root] aws_ecs_service.app_service (expand)" -> "[root] aws_ecs_task_definition.app_task_definition (expand)"
+		"[root] aws_ecs_service.app_service (expand)" -> "[root] aws_security_group.ecs_sg (expand)"
+		"[root] aws_ecs_service.app_service (expand)" -> "[root] aws_subnet.public_1 (expand)"
+		"[root] aws_ecs_service.app_service (expand)" -> "[root] aws_subnet.public_2 (expand)"
+		"[root] aws_ecs_service.app_service (expand)" -> "[root] aws_subnet.public_3 (expand)"
+		"[root] aws_ecs_task_definition.app_task_definition (expand)" -> "[root] aws_iam_role.aws_exec_role (expand)"
+		"[root] aws_ecs_task_definition.app_task_definition (expand)" -> "[root] aws_iam_role.ecs_app_execution_role (expand)"
+		"[root] aws_iam_policy_attachment.ecs_app_execution_role_attachment (expand)" -> "[root] aws_iam_role.ecs_app_execution_role (expand)"
+		"[root] aws_iam_role.aws_exec_role (expand)" -> "[root] provider[\"registry.terraform.io/hashicorp/aws\"]"
+		"[root] aws_iam_role.ecs_app_execution_role (expand)" -> "[root] provider[\"registry.terraform.io/hashicorp/aws\"]"
+		"[root] aws_internet_gateway.igw (expand)" -> "[root] aws_vpc.main (expand)"
+		"[root] aws_route_table.to_igw (expand)" -> "[root] aws_internet_gateway.igw (expand)"
+		"[root] aws_route_table_association.public_subnet1_route (expand)" -> "[root] aws_route_table.to_igw (expand)"
+		"[root] aws_route_table_association.public_subnet1_route (expand)" -> "[root] aws_subnet.public_1 (expand)"
+		"[root] aws_route_table_association.public_subnet2_route (expand)" -> "[root] aws_route_table.to_igw (expand)"
+		"[root] aws_route_table_association.public_subnet2_route (expand)" -> "[root] aws_subnet.public_2 (expand)"
+		"[root] aws_route_table_association.public_subnet3_route (expand)" -> "[root] aws_route_table.to_igw (expand)"
+		"[root] aws_route_table_association.public_subnet3_route (expand)" -> "[root] aws_subnet.public_3 (expand)"
+		"[root] aws_security_group.app_lb_sg (expand)" -> "[root] aws_vpc.main (expand)"
+		"[root] aws_security_group.ecs_sg (expand)" -> "[root] aws_vpc.main (expand)"
+		"[root] aws_subnet.public_1 (expand)" -> "[root] aws_vpc.main (expand)"
+		"[root] aws_subnet.public_1 (expand)" -> "[root] data.aws_availability_zones.azs (expand)"
+		"[root] aws_subnet.public_2 (expand)" -> "[root] aws_vpc.main (expand)"
+		"[root] aws_subnet.public_2 (expand)" -> "[root] data.aws_availability_zones.azs (expand)"
+		"[root] aws_subnet.public_3 (expand)" -> "[root] aws_vpc.main (expand)"
+		"[root] aws_subnet.public_3 (expand)" -> "[root] data.aws_availability_zones.azs (expand)"
+		"[root] aws_vpc.main (expand)" -> "[root] provider[\"registry.terraform.io/hashicorp/aws\"]"
+		"[root] aws_vpc.main (expand)" -> "[root] var.vpc_ip"
+		"[root] data.aws_availability_zones.azs (expand)" -> "[root] provider[\"registry.terraform.io/hashicorp/aws\"]"
+		"[root] output.alb_fqdn (expand)" -> "[root] aws_alb.ecs_app_load_balancer (expand)"
+		"[root] output.availability_zones (expand)" -> "[root] data.aws_availability_zones.azs (expand)"
+		"[root] provider[\"registry.terraform.io/hashicorp/aws\"] (close)" -> "[root] aws_alb_listener.ecs_app_alb_listener_http (expand)"
+		"[root] provider[\"registry.terraform.io/hashicorp/aws\"] (close)" -> "[root] aws_alb_listener.ecs_app_alb_listener_https (expand)"
+		"[root] provider[\"registry.terraform.io/hashicorp/aws\"] (close)" -> "[root] aws_ecs_service.app_service (expand)"
+		"[root] provider[\"registry.terraform.io/hashicorp/aws\"] (close)" -> "[root] aws_iam_policy_attachment.ecs_app_execution_role_attachment (expand)"
+		"[root] provider[\"registry.terraform.io/hashicorp/aws\"] (close)" -> "[root] aws_route_table_association.public_subnet1_route (expand)"
+		"[root] provider[\"registry.terraform.io/hashicorp/aws\"] (close)" -> "[root] aws_route_table_association.public_subnet2_route (expand)"
+		"[root] provider[\"registry.terraform.io/hashicorp/aws\"] (close)" -> "[root] aws_route_table_association.public_subnet3_route (expand)"
+		"[root] root" -> "[root] output.alb_fqdn (expand)"
+		"[root] root" -> "[root] output.availability_zones (expand)"
+		"[root] root" -> "[root] provider[\"registry.terraform.io/hashicorp/aws\"] (close)"
+		"[root] root" -> "[root] var.env_name"
+	}
+}
+
